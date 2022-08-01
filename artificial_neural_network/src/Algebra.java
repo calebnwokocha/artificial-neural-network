@@ -70,8 +70,8 @@ public class Algebra extends Debugger{
             for (double[] row : vectors) {
                 highestVectorSize = (int) this.multiply(this.sum(
                         this.sum(highestVectorSize, row.length) +
-                        Math.abs(this.sum(highestVectorSize,
-                                -row.length))), 0.5); // max
+                                Math.abs(this.sum(highestVectorSize,
+                                        -row.length))), 0.5); // max
             }
             sum = new double[highestVectorSize];
 
@@ -163,14 +163,14 @@ public class Algebra extends Debugger{
             for (double[][] row : matrices) {
                 highestRowSize = (int) this.multiply(this.sum(
                         this.sum(highestRowSize, row.length) +
-                        Math.abs(this.sum(highestRowSize,
-                                -row.length))), 0.5);
+                                Math.abs(this.sum(highestRowSize,
+                                        -row.length))), 0.5);
 
                 for (double[] value : row) {
                     highestColumnSize = (int) this.multiply(this.sum(
                             this.sum(highestColumnSize, value.length) +
-                            Math.abs(this.sum(highestColumnSize,
-                                    -value.length))), 0.5);
+                                    Math.abs(this.sum(highestColumnSize,
+                                            -value.length))), 0.5);
                 }
             }
 
@@ -219,8 +219,8 @@ public class Algebra extends Debugger{
                 for (double[] row : matrix) {
                     highestColumnSize = (int) this.multiply(this.sum(
                             this.sum(highestColumnSize, row.length) +
-                            Math.abs(this.sum(highestColumnSize,
-                                    -row.length))), 0.5);
+                                    Math.abs(this.sum(highestColumnSize,
+                                            -row.length))), 0.5);
                 }
 
                 transposedMatrix = new double[highestColumnSize][matrix.length];
@@ -270,8 +270,8 @@ public class Algebra extends Debugger{
                         highestColumnSize = (int) this.multiply(this.sum(
                                 this.sum(highestColumnSize,
                                         matrices[n + 1][i].length) +
-                                Math.abs(this.sum(highestColumnSize,
-                                        -matrices[n + 1][i].length))), 0.5);
+                                        Math.abs(this.sum(highestColumnSize,
+                                                -matrices[n + 1][i].length))), 0.5);
                     }
                     // tempProduct (or temporary product) is a temporary array for
                     // storing intermediate products of matrices in matrices 3-D array.
@@ -391,7 +391,7 @@ public class Algebra extends Debugger{
         double[][][] product = new double[0][][];
 
         if (tensors.length > 1) {
-        // TODO:
+            // TODO:
             // Implement tensor multiplication algorithm.
 
         } else {
@@ -733,8 +733,8 @@ public class Algebra extends Debugger{
         for (double[] row : matrix) {
             highestColumnSize = (int) this.multiply(this.sum(
                     this.sum(highestColumnSize + row.length) +
-                    Math.abs(this.sum(highestColumnSize,
-                            -row.length))), 0.5);
+                            Math.abs(this.sum(highestColumnSize,
+                                    -row.length))), 0.5);
         }
 
         // Make tempQ a square matrix by padding according to
@@ -828,8 +828,8 @@ public class Algebra extends Debugger{
         for (double[] row : matrix) {
             lowestColumnSize = (int) this.multiply(this.sum(
                     this.sum(lowestColumnSize, row.length) -
-                    Math.abs(this.sum(lowestColumnSize,
-                            -row.length))), 0.5);
+                            Math.abs(this.sum(lowestColumnSize,
+                                    -row.length))), 0.5);
         }
 
         // Check if the input matrix is a square matrix.

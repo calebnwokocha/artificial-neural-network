@@ -15,7 +15,6 @@ public class Statistics extends Algebra {
     public double minimum(double... sampleSpace) {
         Arrays.sort(sampleSpace);
         double min = sampleSpace[0];
-        printLine("\nMinimum of the sample space is " + min);
         return min;
     }
 
@@ -23,7 +22,6 @@ public class Statistics extends Algebra {
     public double maximum(double... sampleSpace) {
         Arrays.sort(sampleSpace);
         double max = sampleSpace[sampleSpace.length - 1];
-        printLine("\nMaximum of the sample space is " + max);
         return max;
     }
 
@@ -35,8 +33,6 @@ public class Statistics extends Algebra {
         if (sampleSpace.length > 0) {
             mean = sum / sampleSpace.length;
         }
-
-        printLine("\nMean of the sample space is " + mean);
 
         return mean;
     }
@@ -58,8 +54,6 @@ public class Statistics extends Algebra {
         } else {
             median = sampleSpace[(sampleSpace.length + 1) / 2];
         }
-
-        printLine("\nMedian of the sample space is " + median);
 
         return median;
     }
@@ -84,8 +78,6 @@ public class Statistics extends Algebra {
             }
         }
 
-        printLine("\nMode of the sample space is " + mode);
-
         return mode;
     }
 
@@ -105,8 +97,6 @@ public class Statistics extends Algebra {
 
         Arrays.sort(event);
         Q1 = this.median(event);
-
-        printLine("\nLower quartile median of the sample space is " + Q1);
 
         return Q1;
     }
@@ -128,8 +118,6 @@ public class Statistics extends Algebra {
         Arrays.sort(event);
         Q3 = this.median(event);
 
-        printLine("\nUpper quartile median of the sample space is " + Q3);
-
         return Q3;
     }
 
@@ -140,14 +128,6 @@ public class Statistics extends Algebra {
 
         boolean isOutlier = outCome < this.Q1(sampleSpace) - (1.5 * interQuartileRange) ||
                 outCome > this.Q3(sampleSpace) + (1.5 * interQuartileRange);
-
-        if (isDebugging()) {
-            if (isOutlier) {
-                printLine("\n" + outCome + " is an outlier in the sample space");
-            } else {
-                printLine("\n" + outCome + " is not an outlier in the sample space");
-            }
-        }
 
         return isOutlier;
     }
@@ -184,8 +164,6 @@ public class Statistics extends Algebra {
             }
         }
 
-        printLine("\nProbability of the event in the sample space is " + probability);
-
         return probability;
     }
 
@@ -203,9 +181,6 @@ public class Statistics extends Algebra {
             conditionalProbability = this.probability(sampleSpace, event);
         }
 
-        printLine("\nConditional probability of the event in the sample space is "
-                + conditionalProbability);
-
         return conditionalProbability;
     }
 
@@ -222,21 +197,18 @@ public class Statistics extends Algebra {
                     probability = multiply(probability,
                             this.probability(sampleSpace, events[i], events[i - 1]));
                 }
-                printLine("\nProbability of the events in the sample space is " + probability);
             } else if ("or".equals(operator)) {
                 for (double[] event : events) {
                     allEvents = ArrayUtils.addAll(allEvents, event);
                 }
 
                 probability = this.probability(sampleSpace, allEvents);
-                printLine("\nProbability of any events in the sample space is " + probability);
             } else if ("not".equals(operator)) {
                 for (double[] event : events) {
                     allEvents = ArrayUtils.addAll(allEvents, event);
                 }
 
                 probability = 1 - this.probability(sampleSpace, allEvents);
-                printLine("\nProbability of neither events in the sample space is " + probability);
             }
         }
 
@@ -246,17 +218,7 @@ public class Statistics extends Algebra {
     // EVENT OUTCOMES PROBABILITIES
     public double[] probabilities (double[] sampleSpace) {
         double[] probabilities = new double[sampleSpace.length];
-
         Arrays.fill(probabilities, (double) 1 / probabilities.length);
-
-        if (isDebugging()) {
-            printLine("\nProbabilities of outcomes in the event are");
-            for (double probablity : probabilities) {
-                printText(probablity + " ");
-            }
-            printLine("");
-        }
-
         return probabilities;
     }
 
@@ -278,24 +240,12 @@ public class Statistics extends Algebra {
             probabilities[i] = probabilities(sampleSpaces[i]);
         }
 
-        if (isDebugging()) {
-            printLine("\nProbabilities of outcomes in the events are");
-            for (double[] row : probabilities) {
-                for (double probability : row) {
-                    printText(probability + " ");
-                }
-                printLine("");
-            }
-            printLine("");
-        }
-
         return probabilities;
     }
 
     // EVENT EXPECTATION
     public double expectedValue (double[] sampleSpace, double[] probabilities) {
         double expectedValue = (Double) multiply(sampleSpace, probabilities);
-        printLine("\nExpected value of the sample space is " + expectedValue);
         return expectedValue;
     }
 
@@ -310,14 +260,6 @@ public class Statistics extends Algebra {
         for (int i = 0; i < expectedValues.length; i++) {
             expectedValues[i] = this.expectedValue(transposedSampleSpaces[i],
                     transposedProbabilities[i]);
-        }
-
-        if (isDebugging()) {
-            printLine("\nExpected values of the sample spaces are");
-            for (double expectedValue : expectedValues) {
-                printText(expectedValue + " ");
-            }
-            printLine("");
         }
 
         return expectedValues;
@@ -354,17 +296,6 @@ public class Statistics extends Algebra {
             j += 1;
         }
 
-        if (isDebugging()) {
-            printLine("\nExpected values of the observation are");
-            for (int i = 0; i < expectedValues.length; i++) {
-                for (int k = 0; k < expectedValues[i].length; k++) {
-                    printText(expectedValues[i][k] + " ");
-                }
-                printLine("");
-            }
-            printLine("");
-        }
-
         return expectedValues;
     }
 
@@ -381,8 +312,6 @@ public class Statistics extends Algebra {
             variance = squaredSum / (sampleSpace.length - 1);
         }
 
-        printLine("\nVariance of the sample space is " + variance);
-
         return variance;
     }
 
@@ -394,21 +323,12 @@ public class Statistics extends Algebra {
             variances[i] = this.variance(sampleSpaces[i], expectedValues[i]);
         }
 
-        if (isDebugging()) {
-            printLine("\nVariances of the sample spaces are");
-            for (double variance : variances) {
-                printText(variance + "");
-            }
-            printLine("");
-        }
-
         return variances;
     }
 
     // EVENT STANDARD DEVIATION
     public double standardDeviation (double[] sampleSpace, double expectedValue) {
         double standardDeviation = Math.sqrt(this.variance(sampleSpace, expectedValue));
-        printLine("\nStandard deviation of the sample space is " + standardDeviation);
         return standardDeviation;
     }
 
@@ -418,14 +338,6 @@ public class Statistics extends Algebra {
 
         for (int i = 0; i < standardDeviations.length; i++) {
             standardDeviations[i] = this.standardDeviation(sampleSpaces[i], expectedValues[i]);
-        }
-
-        if (isDebugging()) {
-            printLine("\nStandard deviations of the sample spaces are");
-            for (double standardDeviation : standardDeviations) {
-                printText(standardDeviation + "");
-            }
-            printLine("");
         }
 
         return standardDeviations;
@@ -442,8 +354,6 @@ public class Statistics extends Algebra {
             zScore = (outCome - expectedValue) / standardDeviation;
         }
 
-        printLine("\nZ-Score of " + outCome + " in the sample space is " + zScore);
-
         return zScore;
     }
 
@@ -457,14 +367,6 @@ public class Statistics extends Algebra {
             for (int i = 0; i < sampleSpaces.length; i++) {
                 zScores[i] = (event[i] - expectedValue) / standardDeviation;
             }
-        }
-
-        if (isDebugging()) {
-            printLine("\nZ-Scores of outcomes in the sample space are");
-            for (double zScore : zScores) {
-                printText(zScore + " ");
-            }
-            printLine("");
         }
 
         return zScores;
@@ -488,17 +390,6 @@ public class Statistics extends Algebra {
             zScores[i] = this.zScores(sampleSpaces[i], probabilities[i], events[i]);
         }
 
-        if (isDebugging()) {
-            printLine("\nZ-Scores of outcomes in the sample space are");
-            for (double[] row : zScores) {
-                for (double zScore : row) {
-                    printText(zScore + " ");
-                }
-                printLine("");
-            }
-            printLine("");
-        }
-
         return zScores;
     }
 
@@ -507,7 +398,6 @@ public class Statistics extends Algebra {
         double[][] zScores = zScores(sampleSpaces, probabilities, sampleSpaces);
         double product = (Double) multiply(zScores);
         double correlation = product / (zScores[0].length - 1);
-        printLine("\nCorrelation of the sample spaces is " + correlation);
         return correlation;
     }
 
