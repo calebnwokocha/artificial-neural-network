@@ -21,12 +21,8 @@ public class Algebra extends Debugger{
             for (double scalar : scalars) {
                 sum += scalar;
             }
-            printLine("\nSum of scalars is " + sum);
         } else if(scalars.length == 1) {
             sum = scalars[0];
-            printLine("\nThe scalar is " + sum);
-        } else {
-            printLine("\nThere is no scalar to sum.");
         }
 
         return sum;
@@ -42,14 +38,10 @@ public class Algebra extends Debugger{
             for (double scalar : scalars) {
                 product *= scalar;
             }
-
-            printLine("\nProduct of scalars is " + product);
         } else if (scalars.length == 1) {
             product = scalars[0];
-            printLine("\nThere is no scalar to multiply.");
         } else {
             product = 0.0;
-            printLine("\nThere is no scalar to multiply.");
         }
 
         return product;
@@ -84,24 +76,8 @@ public class Algebra extends Debugger{
                     }
                 }
             }
-
-            if (isDebugging()) {
-                printLine("\nSum of vectors is");
-                for (double scalar : sum) {
-                    printLine(scalar + "");
-                }
-            }
         } else if (vectors.length == 1) {
             sum = vectors[0];
-
-            if (isDebugging()) {
-                printLine("\nThe vector is");
-                for (double scalar : sum) {
-                    printLine(scalar + "");
-                }
-            }
-        } else {
-            printLine("\nThere is no vector to sum.");
         }
 
         return sum;
@@ -133,19 +109,8 @@ public class Algebra extends Debugger{
                 // Reset scalarProduct.
                 scalarProduct = 1.0;
             }
-
-            printLine("\nProduct of vectors is " + product);
         } else if (vectors.length == 1) {
-            if (isDebugging()) {
-                printLine("\nThe vector is");
-                for (double scalar : vectors[0]) {
-                    printLine(scalar + "");
-                }
-            }
-
             return vectors[0];
-        } else {
-            printLine("\nThere is no vector to multiply.");
         }
 
         return product;
@@ -188,20 +153,8 @@ public class Algebra extends Debugger{
                 }
             }
 
-            if (isDebugging()) {
-                printLine("\nSum of matrices is");
-                for (double[] row : sum) {
-                    for (double value : row) {
-                        printText(value + " ");
-                    }
-                    printText("\n");
-                }
-            }
         } else if (matrices.length == 1) {
             sum = matrices[0];
-            printLine("\nThere is no matrix to sum.");
-        } else {
-            printLine("\nThere is no matrix to sum.");
         }
 
         return sum;
@@ -230,22 +183,9 @@ public class Algebra extends Debugger{
                         transposedMatrix[j][i] = matrix[i][j];
                     }
                 }
-
-                if (isDebugging()) {
-                    printLine("\nTranspose of the matrix is");
-
-                    for (double[] row : transposedMatrix) {
-                        for (double value : row) {
-                            printText(value + " ");
-                        }
-                        printLine("");
-                    }
-                }
-            } else {
-                printLine("\nThere is no matrix to transpose.");
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            printLine("\nThere is no matrix to transpose.");
+            e.printStackTrace();
         }
 
         return transposedMatrix;
@@ -319,18 +259,6 @@ public class Algebra extends Debugger{
                             }
                         }
 
-                        if (isDebugging()) {
-                            printLine("\nThe transposed matrix column is");
-                            for (double value : transposedMatrixColElements) {
-                                printLine(value + "");
-                            }
-
-                            printLine("\nNext matrix column is");
-                            for (double value : nextMatrixColElements) {
-                                printLine(value + "");
-                            }
-                        }
-
                         // transposedMatrixColElements and nextMatrixColElements are vectors,
                         // therefore, multiply them as vectors using the multiply function. This function
                         // returns a scalar that is then stored in i,j index of tempProduct.
@@ -349,20 +277,8 @@ public class Algebra extends Debugger{
             // Result is the final temporary product.
             product = tempProduct;
 
-            if (isDebugging()) {
-                printLine("\nThe product of matrices is");
-                for (double[] row : product) {
-                    for (int j = 0; j < product[0].length; j++) {
-                        printText(row[j] + " ");
-                    }
-                    printLine("");
-                }
-            }
         } else if (matrices.length == 1) {
             product = matrices[0];
-            printLine("\nThere no matrix to multiply.");
-        } else {
-            printLine("\nThere no matrix to multiply.");
         }
 
         return product;
@@ -652,7 +568,6 @@ public class Algebra extends Debugger{
         }
         norm = Math.pow(norm, 1.0 / power);
 
-        printLine("\nNorm of the vector is " + norm);
         return norm;
     }
 
@@ -667,7 +582,6 @@ public class Algebra extends Debugger{
         }
         norm = Math.sqrt(norm);
 
-        printLine("\nNorm of the matrix is " + norm);
         return norm;
     }
 
@@ -687,16 +601,6 @@ public class Algebra extends Debugger{
             }
         }
 
-        if (isDebugging()) {
-            printLine("\nDiagonal matrix of the vector is");
-            for (double[] row : diag) {
-                for (double value : row) {
-                    printText(value + " ");
-                }
-                printText("\n");
-            }
-        }
-
         return diag;
     }
 
@@ -709,8 +613,6 @@ public class Algebra extends Debugger{
                 trace += matrix[i][i];
             } catch (ArrayIndexOutOfBoundsException e) {break;}
         }
-
-        printLine("\nTrace of the matrix is " + trace);
 
         return trace;
     }
@@ -801,20 +703,6 @@ public class Algebra extends Debugger{
         R = matrix;
         QR = new double[][][]{Q, R};
 
-        if (isDebugging()) {
-            printLine("\nQR decompostion of the matrix is\n");
-            for (double[][] m : QR) {
-                for (double[] row : m) {
-                    for (double value : row) {
-                        printText(value + " ");
-                    }
-                    printLine("");
-                }
-
-                printLine("");
-            }
-        }
-
         return QR;
     }
 
@@ -842,8 +730,6 @@ public class Algebra extends Debugger{
         } else {
             det = 0.0;
         }
-
-        printLine("\nDeterminant of the matrix is " + det);
 
         return det;
     }
