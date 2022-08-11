@@ -1,36 +1,42 @@
-/*
- * Author: Caleb Nwokocha
- * School: The University of Manitoba
- * Faculty: Faculty of Science
- */
-
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class Main {
-
     public static void main(String[] args) {
-        double[][] dataSet;
-        double[][] trainingSet = new double[152][13];
-        double[] trainingTarget = new double[152];
-        double[][] newTrainingTarget = new double[152][13];
-        double[][] testSet = new double[152][13];
-        double[] testTarget = new double[152];
-        double[][] newTestTarget = new double[152][13];
+        Neuron[][] trainingSet = new Neuron[151][13];
+        Neuron[][] testingSet = new Neuron[151][13];
+        float learningRate = 0.000001f;
+        float baseError = 0.03f;
+
+        float[][] dataSet;
+        float[][] trainingSetFloat = new float[151][13];
+        float[] trainingObjective = new float[151];
+        float[][] newTrainingObjective = new float[151][13];
+
+        float[][] testingSetFloat = new float[151][13];
+        float[] testingObjective = new float[151];
+        float[][] newTestingObjective = new float[151][13];
+
         int k = 0;
         boolean kTest = false;
 
-        FileHandler fileHandler = new FileHandler();
-        dataSet = fileHandler.read("artificial_neural_network/src/dataset/processed.cleveland.data");
+        dataSet = read("artificial_neural_network/src/dataset/processed.cleveland.data");
 
-        for (int i = 0; i < dataSet.length; i++) {
+        for (int i = 0; i < dataSet.length - 1; i++) {
             for (int j = 0; j < dataSet[i].length - 1; j++) {
-                if (i < dataSet.length / 2) {
-                    trainingSet[i][j] = dataSet[i][j];
-                    trainingTarget[i] = dataSet[i][dataSet[i].length - 1];
+                if (i < (dataSet.length - 1) / 2) {
+                    trainingSetFloat[i][j] = dataSet[i][j];
+                    if (dataSet[i][dataSet[i].length - 1] > 0) {
+                        trainingObjective[i] = 1.0f;
+                    }
                 } else {
-                    testSet[k][j] = dataSet[i][j];
-                    testTarget[k] = dataSet[i][dataSet[i].length - 1];
+                    testingSetFloat[k][j] = dataSet[i][j];
+                    if (dataSet[i][dataSet[i].length - 1] > 0) {
+                        testingObjective[k] = 1.0f;
+                    }
                     kTest = true;
                 }
             }
@@ -39,108 +45,182 @@ public class Main {
             }
         }
 
-        for (int i = 0; i < newTrainingTarget.length; i++) {
-            for (int j = 0; j < newTrainingTarget[i].length; j++) {
+        for (int i = 0; i < newTrainingObjective.length; i++) {
+            for (int j = 0; j < newTrainingObjective[i].length; j++) {
                 if (j == 0) {
-                    newTrainingTarget[i][j] = trainingTarget[i];
-                    newTestTarget[i][j] = testTarget[i];
+                    newTrainingObjective[i][j] = trainingObjective[i];
+                    newTestingObjective[i][j] = testingObjective[i];
                 } else {
-                    newTrainingTarget[i][j] = 0.0;
-                    newTestTarget[i][j] = 0.0;
+                    newTrainingObjective[i][j] = 0.0f;
+                    newTestingObjective[i][j] = 0.0f;
                 }
             }
         }
 
+        for (int i = 0; i < trainingSetFloat.length; i++) {
+            for (int j = 0; j < trainingSetFloat[i].length; j++) {
+                trainingSet[i][j] = new Neuron(10);
+                testingSet[i][j] = new Neuron(10);
+            }
+        }
 
-       /* trainingSet = new double[][] {
-                {1, 2, 3, 4, 6, 7},
-                {1, 2, 2, 4, 7, 7},
-                {9, 2, 3, 4, 3, 7},
-                {1, 5, 3, 6, 6, 7}
-        };
+        for (int i = 0; i < trainingSet.length; i++) {
+            for (int j = 0; j < trainingSet[i].length; j++) {
+                trainingSet[i][j].setValue(trainingSetFloat[i][j]);
+                testingSet[i][j].setValue(testingSetFloat[i][j]);
+            }
+        }
 
-        double[][] trainingObjective = new double[][] {
-                {0.5, 0, 0.1, 0, 0.2, 0.2},
-                {0.5, 0, 0, 0, 0, 0.5},
-                {0.1, 0.1, 0.5, 0, 0.3, 0},
-                {0.5, 0, 0, 0, 0, 0.5},
-        };*/
+        Network network = network = new Network(10,
+                trainingSet[0].length, 10, 11, 12,
+                13, 14, 9, 8, 7, newTrainingObjective[0].length);
 
-        /*double[][] l = trainingSet;
-        double[][] m = trainingObjective;
+        ArrayList<Float> errorRecord = new ArrayList<Float>();
+        errorRecord = train(network, trainingSet, newTrainingObjective, learningRate, baseError);
+        test(network, testingSet, newTestingObjective);
 
-        ArrayList<double[][]> u = new ArrayList<>();
+        System.out.println("\n\nRecord of error");
+        for (float error : errorRecord) {
+            System.out.println(error);
+        }
+        /*Network network = new Network(3, 1, 5, 3);
+        Neuron input = new Neuron(5);
+        input.setValue(4);
+        network.feed(input);
+        for (int i = 0; i < 10000000; i++) {
+            network.optimize(new float[]{1.0f, 0.0f, 1.0f}, 0.01f);
+        }
 
-        u.add(trainingSet);
-        u.add(trainingObjective);
-
-        for (double[][] preWeight : u) {
-            for (double[] doubles : preWeight) {
-                for (double aDouble : doubles) {
-                    System.out.print(aDouble + " ");
-                }
+        for (int i = 0; i < network.getLayers().length; i++) {
+            System.out.println("\nLAYER " + i);
+            for (int j = 0; j < network.getLayers()[i].getNeurons().length; j++) {
+                System.out.print("Neuron " + j + ": ");
+                System.out.print("Value = " + network.getLayers()[i].getNeurons()[j].getValue());
+                System.out.print("; Weights = " + Arrays.toString(network.getLayers()[i].getNeurons()[j].getWeights()));
+                System.out.print("; Bias = " + network.getLayers()[i].getNeurons()[j].getBias());
                 System.out.println("");
             }
-            System.out.println("");
         }
 
-        System.out.println("Index is " + u.indexOf(l));
-        System.out.println("Is contained " + u.contains(l));
+        //network.optimize(new float[]{9, 4, 79, 4, 79, 4, 79, 4, 7, 8}, 0.1f);
 */
+    }
 
-        /*Memory memory = new Memory(10, 6);
-        memory.debugger(true);
-        for (int i = 0; i < trainingObjective.length; i++) {
-            memory.learn(trainingObjective[0], trainingSet[i], 0.001, 0.9);
-            System.out.println("\nNext iteration.");
-        }*/
-
-        Optimizer agent_1 = new Optimizer();
-        agent_1.debugger(true);
-        agent_1.speak(false);
-
-        //target = agent_1.softmax(target);
-
-        double[][] neuron = new double[2][2];
-        double[][][] preWeights = new double[neuron.length - 1][neuron[0].length][neuron[0].length];
-        double[][][] postWeights = new double[neuron.length - 1][neuron[0].length][neuron[0].length];
-        double[][][] solutionWeights = new double[neuron.length - 1][neuron[0].length][neuron[0].length];
-
-        for (int i = 0; i < neuron.length; i++) {
-            for(int j = 0; j < neuron[i].length; j++) {
-                neuron[i][j] = 0.0;
-            }
-        }
-
-        System.out.println("This weight");
-        for (int i = 0; i < preWeights.length; i++) {
-            for(int j = 0; j < preWeights[i].length; j++) {
-                for (int y = 0; y < preWeights[i][j].length; y++) {
-                    preWeights[i][j][y] = 0.0;
-                    postWeights[i][j][y] = Math.random();
-                    System.out.print(postWeights[i][j][y] + " ");
+    public static ArrayList<Float> train (Network network, Neuron[][] trainingSet, float[][] objective, float learningRate, float baseError) {
+        System.out.println("_____________________________________________________________________________________" +
+                "__________________________________________________________________________________________________");
+        System.out.println("Initializing network...");
+        System.out.println("Network initialized");
+        System.out.println("_______________________________________________________________________________________" +
+                "________________________________________________________________________________________________");
+        System.out.println("Checking network error...");
+        int epoch = 1;
+        ArrayList<Float> errorRecord = new ArrayList<Float>();
+        network.feed(trainingSet[0]);
+        network.optimize(objective[0], learningRate);
+        errorRecord.add(network.getNetworkError());
+        if (network.getNetworkError() > baseError) {
+            System.out.println("Error is high: " + network.getNetworkError() + ". Starting training...");
+            int y = 0;
+            while (network.getNetworkError() > baseError && y < 100) {
+                System.out.println("Epoch " + epoch);
+                for (int i = 0; i < trainingSet.length; i++) {
+                    System.out.println("_____________________________________________________________________________" +
+                            "__________________________________________________________________________________________________________");
+                    network.feed(trainingSet[i]);
+                    float[] example = new float[trainingSet[i].length];
+                    for (int j = 0; j < example.length; j++) {
+                        example[j] = trainingSet[i][j].getValue();
+                    }
+                    float[] prediction = new float[network.getLayers()[network.getLayers().length - 1].getNeurons().length];
+                    for (int j = 0; j < prediction.length; j++) {
+                        prediction[j] = network.getLayers()[network.getLayers().length - 1].getNeurons()[j].getValue();
+                    }
+                    System.out.println("Example " + i + ": " + Arrays.toString(example));
+                    System.out.println("Prediction: " + Arrays.toString(prediction));
+                    System.out.println("Objective: " + Arrays.toString(objective[i]));
+                    float error = 0.0f;
+                    Util util = new Util();
+                    for (int k = 0; k < prediction.length; k++) {
+                        error += util.squaredError(objective[i][k], prediction[k]);
+                    }
+                    System.out.println("Network error: " + error);
+                    System.out.println("Optimizing network...");
+                    network.optimize(objective[i], learningRate);
+                    errorRecord.add(network.getNetworkError());
+                    System.out.println("Optimization completed");
                 }
-                System.out.println();
+                y++;
             }
-            System.out.println();
+            System.out.println("______________________________________________________________________________________" +
+                    "_________________________________________________________________________________________________");
+            epoch += 1;
+        } else {
+            System.out.println("Error is low: " + network.getNetworkError());
         }
 
-        for (int i = 0; i < newTrainingTarget.length; i++) {
-            if (i == 0) {
-                solutionWeights = agent_1.gradientDescent(neuron, preWeights, postWeights, newTrainingTarget[i],
-                        trainingSet[i], 0.00000001, 4);
-            } else {
-                solutionWeights = agent_1.gradientDescent(neuron, preWeights, solutionWeights, newTrainingTarget[i],
-                        trainingSet[i], 0.00000001, 4);
+        return errorRecord;
+    }
+
+    public static void test (Network network, Neuron[][] testSet, float[][] objective) {
+        System.out.println("_____________________________________________________________________________________" +
+                "__________________________________________________________________________________________________");
+        System.out.println("Starting testing...");
+        for (int i = 0; i < testSet.length; i++) {
+            System.out.println("__________________________________________________________________________________" +
+                    "_____________________________________________________________________________________________________");
+            network.feed(testSet[i]);
+            float[] test = new float[testSet[i].length];
+            for (int j = 0; j < test.length; j++) {
+                test[j] = testSet[i][j].getValue();
+            }
+            float[] prediction = new float[network.getLayers()[network.getLayers().length - 1].getNeurons().length];
+            for (int j = 0; j < prediction.length; j++) {
+                prediction[j] = network.getLayers()[network.getLayers().length - 1].getNeurons()[j].getValue();
+            }
+            System.out.println("Test " + i + ": " + Arrays.toString(test));
+            System.out.println("Prediction: " + Arrays.toString(prediction));
+            System.out.println("Objective: " + Arrays.toString(objective[i]));
+            float error = 0.0f;
+            Util util = new Util();
+            for (int k = 0; k < prediction.length; k++) {
+                error += util.squaredError(objective[i][k], prediction[k]);
+            }
+            System.out.println("Network error: " + error);
+        }
+    }
+
+    public static float[][] read(String fileName) {
+        String[][] datasetString = new String[303][14];
+        float[][] datasetFloat = new float[303][14];
+        int count = 0;
+
+        try {
+            File file = new File(fileName);
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String data = scanner.nextLine();
+
+                // Copy data to datasetString.
+                datasetString[count] = data.split(",");
+                count++;
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // Convert datasetString to double array.
+        for (int i = 0; i < datasetString.length; i++) {
+            for (int j = 0; j < datasetString[i].length; j++) {
+                if (datasetString[i][j].equals("?")) {
+                    datasetFloat[i][j] = 0.0F;
+                } else {
+                    datasetFloat[i][j]= Float.parseFloat(datasetString[i][j]);
+                }
             }
         }
 
-        Test agent_1_test = new Test(neuron, solutionWeights, newTestTarget);
-        agent_1_test.test(testSet);
-
-
-
-       /* Reinforce reinforce = new Reinforce();
-        reinforce.gradientDescent(6);*/
+        return datasetFloat;
     }
 }
