@@ -5,7 +5,7 @@
  */
 
 public class Layer {
-    private Neuron[] neurons;
+    private final Neuron[] neurons;
 
     // Layer constructor
     public Layer (int neuronCount, String[] cFunctionName, int[] weightCounts, double[] learningRates,
@@ -24,7 +24,7 @@ public class Layer {
         }
     }
 
-    public Neuron[] getNeurons() { return neurons; } // Returns layer neurons.
+    public Neuron[] getNeurons() { return neurons; } // Return layer neurons.
 
     public void activate (double[][] parameters) { // Activate all neurons.
         for (int i = 0; i < this.neurons.length; i++) { neurons[i].activate(parameters[i]); }
@@ -34,7 +34,7 @@ public class Layer {
         for (int i = 0; i < this.neurons.length; i++) { neurons[i].optimize(neighborWeights[i], delta); }
     }
 
-    public void normalize () {
+    public void normalize () { // normalize all neurons for their values sum to equal 1.
         double[] neuronValues = new double[neurons.length];
         double[] normalizedValues = new double[neuronValues.length];
         for (int i = 0; i < neuronValues.length; i++) { neuronValues[i] = neurons[i].getValue(); }

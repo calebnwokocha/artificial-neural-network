@@ -19,27 +19,27 @@ public class Neuron {
         this.learningRate = learningRate;
         this.cFunctionName = cFunctionName;
         this.weights = new ArrayList<>();
-        deltas.add(Math.random()); // Initialize random delta for bias
+        deltas.add(Math.random()); // Initialize random delta of bias.
         for (int i = 0; i < weightCount; i++) {
-            this.weights.add(Math.random()); // Initialize random weights
-            deltas.add(Math.random()); // Initialize random deltas for weights
-        } this.bias = (float) Math.random(); // Initialize random bias
-        this.regularize();
+            this.weights.add(Math.random()); // Initialize random weights.
+            deltas.add(Math.random()); // Initialize random deltas of weights.
+        } this.bias = (float) Math.random(); // Initialize random bias.
+        this.regularize(); // Regularize all weights.
     }
 
-    public String getCFunctionName() { return this.cFunctionName; }
+    public String getCFunctionName() { return this.cFunctionName; } // Return name of comprehensive function.
 
-    public String getActivationType() { return this.activationType; }
+    public String getActivationType() { return this.activationType; } // Return type of activation.
 
-    public ArrayList<Double> getWeights() { return this.weights; }
+    public ArrayList<Double> getWeights() { return this.weights; } // Return neuron weights.
 
-    public double getValue() { return value; }
+    public double getValue() { return value; } // Return neuron value.
 
-    public double getBias() { return bias; }
+    public double getBias() { return bias; } // Return neuron bias.
 
-    public ArrayList<Double> getDeltas() { return deltas; }
+    public ArrayList<Double> getDeltas() { return deltas; } // Return derivatives of error w.r.t bias & weights.
 
-    public double getLearningRate() { return learningRate; }
+    public double getLearningRate() { return learningRate; } // Return learning rate.
 
     public void setLearningRate(double learningRate) { this.learningRate = learningRate; }
 
@@ -49,30 +49,30 @@ public class Neuron {
 
     public void normalize (double normalizedValue) { this.value = normalizedValue; }
 
-    public void activate (double[] parameters) {
+    public void activate (double[] parameters) { // Activate neuron, use parameters for comprehensive function.
         CFunction cFunction = new CFunction(this.cFunctionName, parameters);
-        double cValue = cFunction.getValue();
-        switch (this.activationType) {
+        double cValue = cFunction.getValue(); // Result of comprehensive function.
+        switch (this.activationType) { // Find activation function, and initialize neuron value.
             case "identity" -> this.value = this.identity(cValue);
             case "tanh" -> this.value= this.tanh(cValue);
         }
     }
 
-    public void optimize (double[][][] neighborWeights, double delta) {
-        this.setErrorDerivatives(neighborWeights, delta);
-        for (int i = 0; i < this.deltas.size(); i++) {
-            if (i == 0) { this.bias = this.bias - (this.learningRate * this.deltas.get(i)); }
+    public void optimize (double[][][] neighborWeights, double delta) { // Optimize neuron bias & weights.
+        this.setDeltas(neighborWeights, delta); // Calculate derivatives of error w.r.t bias & weights.
+        for (int i = 0; i < this.deltas.size(); i++) { // Update bias and all weights.
+            if (i == 0) { this.bias = this.bias - (this.learningRate * this.deltas.get(i)); } // delta w.r.t to bias is at index 0.
             else { this.weights.set(i - 1, this.weights.get(i - 1) - (this.learningRate * this.deltas.get(i))); }
-        } this.regularize();
+        } this.regularize(); // Regularize all weights.
     }
 
-    private void regularize () {
-        double maxWeight = 0.0;
+    private void regularize () { // Regularize all weights to avoid overflow & underflow.
+        double maxWeight = 0.0; // For all weights, weights[i] = weights[i] - maxWeight.
         for (double weight : this.weights) { maxWeight = (maxWeight + weight + Math.abs(maxWeight - weight)) * 0.5; }
         for (int i = 0; i < weights.size(); i++) { weights.set(i, weights.get(i) - maxWeight); }
     }
 
-    private void setErrorDerivatives(double[][][] neighborWeights, double delta) {
+    private void setDeltas (double[][][] neighborWeights, double delta) {
         double sum = 0.0;
         double product = 1.0;
         for (int i = 0; i < neighborWeights.length; i++) {

@@ -25,9 +25,9 @@ public class Network {
         }
     }
 
-    public Layer[] getLayers() { return this.layers; } // Returns network layers.
+    public Layer[] getLayers() { return this.layers; } // Return network layers.
 
-    public double getError() { return this.error; } // Returns network error.
+    public double getError() { return this.error; } // Return network error.
 
     // Set the network error to the error parameter if objective is null,
     // otherwise, calculate the network error using the objective.
@@ -35,8 +35,7 @@ public class Network {
         if (objective == null) { this.error = error; }
         else { error  = 0.0;
             Layer outputLayer = this.layers[this.layers.length - 1];
-            for (int i = 0; i < outputLayer.getNeurons().length; i++) {
-                // Using half squared error formula to calculate error.
+            for (int i = 0; i < outputLayer.getNeurons().length; i++) { // Using half squared error formula to calculate error.
                 error += Math.pow((objective[i] - outputLayer.getNeurons()[i].getValue()), 2) * 0.5;
             } this.error = error;
         }
@@ -52,7 +51,7 @@ public class Network {
     public void backprop (double[][][][][] neighborWeights) {
         double delta = Math.pow(this.error * 2, 0.5); // Derivative of network error.
         for (int i = 0; i < layers.length; i++) { // Optimize all layers.
-            if (i != layers.length - 1) { layers[i].optimize(neighborWeights[i], delta); }
+            if (i != layers.length - 1) { layers[i].optimize(neighborWeights[i], delta); } // Don't optimize output layer.
         }
     }
 }
