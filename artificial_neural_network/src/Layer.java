@@ -1,40 +1,52 @@
+/*
+ * AUTHOR: CALEB PRINCEWILL NWOKOCHA
+ * SCHOOL: THE UNIVERSITY OF MANITOBA
+ * DEPARTMENT: COMPUTER SCIENCE
+ */
+
 public class Layer {
     private Neuron[] neurons;
 
     // Layer constructor
-    public Layer (int numOfNeurons, int nextLayerSize) {
-        this.neurons = new Neuron[numOfNeurons];
-        // For all neurons in layer.
-        for (int i = 0; i < this.neurons.length; i++) {
-            // Number of weights for each neuron equal to
-            // size of the next layer.
-            this.neurons[i] = new Neuron(nextLayerSize);
+    public Layer (int neuronCount, String[] cFunctionName, int[] weightCounts, double[] learningRates,
+                  String[] activationType) throws WrongInitialization
+    {
+        // neuronCount is the number of neurons in the layer.
+        if (cFunctionName.length != neuronCount || weightCounts.length != neuronCount
+                || learningRates.length != neuronCount || activationType.length != neuronCount)
+        { // The length of cFunctionName, weightCounts, learningRates, and activationType must equal neuronCount.
+            throw new WrongInitialization("Wrong initialization of layer"); }
+        else { // Initialize all neurons.
+            this.neurons = new Neuron[neuronCount];
+            for (int i = 0; i < neurons.length; i++) {
+                neurons[i] = new Neuron(cFunctionName[i], weightCounts[i], learningRates[i], activationType[i]);
+            }
         }
     }
 
-    public Neuron[] getNeurons() { return neurons; }
+    public Neuron[] getNeurons() { return neurons; } // Returns layer neurons.
 
-    public void setNeurons(Neuron[] neurons) { this.neurons = neurons; }
-
-    public float totalNeuronValue () {
-        float sum = 0.0f;
-        for (Neuron neuron : this.neurons) { sum += neuron.getValue(); }
-        return sum;
+    public void activate (double[][] parameters) { // Activate all neurons.
+        for (int i = 0; i < this.neurons.length; i++) { neurons[i].activate(parameters[i]); }
     }
 
-/*
-    public float totalN
-*/
+    public void optimize (double[][][][] neighborWeights, double delta) { // Optimize all neurons.
+        for (int i = 0; i < this.neurons.length; i++) { neurons[i].optimize(neighborWeights[i], delta); }
+    }
 
     public void normalize () {
-        Util util = new Util();
-        float[] neuronValues = new float[neurons.length];
-        for (int i = 0; i < neuronValues.length; i++) {
-            neuronValues[i] = neurons[i].getValue();
-        }
-        neuronValues = util.softmax(neuronValues);
-        for (int i = 0; i < neurons.length; i++) {
-            neurons[i].setValue(neuronValues[i]);
-        }
+        double[] neuronValues = new double[neurons.length];
+        double[] normalizedValues = new double[neuronValues.length];
+        for (int i = 0; i < neuronValues.length; i++) { neuronValues[i] = neurons[i].getValue(); }
+        normalizedValues = this.softmax(neuronValues);
+        for (int i = 0; i < normalizedValues.length; i++) { neurons[i].normalize(normalizedValues[i]); }
+    }
+
+    private double[] softmax (double[] x) {
+        double sum = 0.0;
+        double[] y = new double[x.length];
+        for (double i : x) { sum += Math.pow(Math.E, i); }
+        for (int i = 0; i < y.length; i++) { y[i] = Math.pow(Math.E, x[i]) / sum;
+        } return y;
     }
 }

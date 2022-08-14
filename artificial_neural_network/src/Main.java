@@ -1,3 +1,9 @@
+/*
+ * AUTHOR: CALEB PRINCEWILL NWOKOCHA
+ * SCHOOL: THE UNIVERSITY OF MANITOBA
+ * DEPARTMENT: COMPUTER SCIENCE
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,17 +14,17 @@ public class Main {
     public static void main(String[] args) {
         Neuron[][] trainingSet = new Neuron[151][13];
         Neuron[][] testingSet = new Neuron[151][13];
-        float learningRate = 0.000001f;
-        float baseError = 0.03f;
+        double learningRate = 0.1;
+        double baseError = 0.03;
 
-        float[][] dataSet;
-        float[][] trainingSetFloat = new float[151][13];
-        float[] trainingObjective = new float[151];
-        float[][] newTrainingObjective = new float[151][13];
+        double[][] dataSet;
+        double[][] trainingSetFloat = new double[151][13];
+        double[] trainingObjective = new double[151];
+        double[][] newTrainingObjective = new double[151][13];
 
-        float[][] testingSetFloat = new float[151][13];
-        float[] testingObjective = new float[151];
-        float[][] newTestingObjective = new float[151][13];
+        double[][] testingSetFloat = new double[151][13];
+        double[] testingObjective = new double[151];
+        double[][] newTestingObjective = new double[151][13];
 
         int k = 0;
         boolean kTest = false;
@@ -28,14 +34,14 @@ public class Main {
         for (int i = 0; i < dataSet.length - 1; i++) {
             for (int j = 0; j < dataSet[i].length - 1; j++) {
                 if (i < (dataSet.length - 1) / 2) {
-                    trainingSetFloat[i][j] = dataSet[i][j];
+                    trainingSetFloat[i][j] = Math.random();
                     if (dataSet[i][dataSet[i].length - 1] > 0) {
-                        trainingObjective[i] = 1.0f;
+                        trainingObjective[i] = Math.random();
                     }
                 } else {
                     testingSetFloat[k][j] = dataSet[i][j];
                     if (dataSet[i][dataSet[i].length - 1] > 0) {
-                        testingObjective[k] = 1.0f;
+                        testingObjective[k] = Math.random();
                     }
                     kTest = true;
                 }
@@ -51,62 +57,41 @@ public class Main {
                     newTrainingObjective[i][j] = trainingObjective[i];
                     newTestingObjective[i][j] = testingObjective[i];
                 } else {
-                    newTrainingObjective[i][j] = 0.0f;
-                    newTestingObjective[i][j] = 0.0f;
+                    newTrainingObjective[i][j] = Math.random();
+                    newTestingObjective[i][j] = Math.random();
                 }
             }
         }
 
         for (int i = 0; i < trainingSetFloat.length; i++) {
             for (int j = 0; j < trainingSetFloat[i].length; j++) {
-                trainingSet[i][j] = new Neuron(10);
-                testingSet[i][j] = new Neuron(10);
+                //trainingSet[i][j] = new Neuron(10);
+                //testingSet[i][j] = new Neuron(10);
             }
         }
 
         for (int i = 0; i < trainingSet.length; i++) {
             for (int j = 0; j < trainingSet[i].length; j++) {
-                trainingSet[i][j].setValue(trainingSetFloat[i][j]);
-                testingSet[i][j].setValue(testingSetFloat[i][j]);
+                //trainingSet[i][j].setValue(trainingSetFloat[i][j]);
+                //testingSet[i][j].setValue(testingSetFloat[i][j]);
             }
         }
 
-        Network network = network = new Network(10,
+        /*Network network = network = new Network(10,
                 trainingSet[0].length, 10, 11, 12,
                 13, 14, 9, 8, 7, newTrainingObjective[0].length);
-
-        ArrayList<Float> errorRecord = new ArrayList<Float>();
+*/
+       /* ArrayList<Double> errorRecord = new ArrayList<>();
         errorRecord = train(network, trainingSet, newTrainingObjective, learningRate, baseError);
         test(network, testingSet, newTestingObjective);
 
         System.out.println("\n\nRecord of error");
-        for (float error : errorRecord) {
+        for (double error : errorRecord) {
             System.out.println(error);
-        }
-        /*Network network = new Network(3, 1, 5, 3);
-        Neuron input = new Neuron(5);
-        input.setValue(4);
-        network.feed(input);
-        for (int i = 0; i < 10000000; i++) {
-            network.optimize(new float[]{1.0f, 0.0f, 1.0f}, 0.01f);
-        }
-
-        for (int i = 0; i < network.getLayers().length; i++) {
-            System.out.println("\nLAYER " + i);
-            for (int j = 0; j < network.getLayers()[i].getNeurons().length; j++) {
-                System.out.print("Neuron " + j + ": ");
-                System.out.print("Value = " + network.getLayers()[i].getNeurons()[j].getValue());
-                System.out.print("; Weights = " + Arrays.toString(network.getLayers()[i].getNeurons()[j].getWeights()));
-                System.out.print("; Bias = " + network.getLayers()[i].getNeurons()[j].getBias());
-                System.out.println("");
-            }
-        }
-
-        //network.optimize(new float[]{9, 4, 79, 4, 79, 4, 79, 4, 7, 8}, 0.1f);
-*/
+        }*/
     }
 
-    public static ArrayList<Float> train (Network network, Neuron[][] trainingSet, float[][] objective, float learningRate, float baseError) {
+    /*public static ArrayList<Double> train (Network network, Neuron[][] trainingSet, double[][] objective, double learningRate, double baseError) {
         System.out.println("_____________________________________________________________________________________" +
                 "__________________________________________________________________________________________________");
         System.out.println("Initializing network...");
@@ -115,7 +100,7 @@ public class Main {
                 "________________________________________________________________________________________________");
         System.out.println("Checking network error...");
         int epoch = 1;
-        ArrayList<Float> errorRecord = new ArrayList<Float>();
+        ArrayList<Double> errorRecord = new ArrayList<>();
         network.feed(trainingSet[0]);
         network.optimize(objective[0], learningRate);
         errorRecord.add(network.getNetworkError());
@@ -128,18 +113,18 @@ public class Main {
                     System.out.println("_____________________________________________________________________________" +
                             "__________________________________________________________________________________________________________");
                     network.feed(trainingSet[i]);
-                    float[] example = new float[trainingSet[i].length];
+                    double[] example = new double[trainingSet[i].length];
                     for (int j = 0; j < example.length; j++) {
                         example[j] = trainingSet[i][j].getValue();
                     }
-                    float[] prediction = new float[network.getLayers()[network.getLayers().length - 1].getNeurons().length];
+                    double[] prediction = new double[network.getLayers()[network.getLayers().length - 1].getNeurons().length];
                     for (int j = 0; j < prediction.length; j++) {
                         prediction[j] = network.getLayers()[network.getLayers().length - 1].getNeurons()[j].getValue();
                     }
-                    System.out.println("Example " + i + ": " + Arrays.toString(example));
+                    System.out.println("\nExample " + i + ": " + Arrays.toString(example));
                     System.out.println("Prediction: " + Arrays.toString(prediction));
                     System.out.println("Objective: " + Arrays.toString(objective[i]));
-                    float error = 0.0f;
+                    double error = 0.0;
                     Util util = new Util();
                     for (int k = 0; k < prediction.length; k++) {
                         error += util.squaredError(objective[i][k], prediction[k]);
@@ -162,7 +147,7 @@ public class Main {
         return errorRecord;
     }
 
-    public static void test (Network network, Neuron[][] testSet, float[][] objective) {
+    public static void test (Network network, Neuron[][] testSet, double[][] objective) {
         System.out.println("_____________________________________________________________________________________" +
                 "__________________________________________________________________________________________________");
         System.out.println("Starting testing...");
@@ -170,11 +155,11 @@ public class Main {
             System.out.println("__________________________________________________________________________________" +
                     "_____________________________________________________________________________________________________");
             network.feed(testSet[i]);
-            float[] test = new float[testSet[i].length];
+            double[] test = new double[testSet[i].length];
             for (int j = 0; j < test.length; j++) {
                 test[j] = testSet[i][j].getValue();
             }
-            float[] prediction = new float[network.getLayers()[network.getLayers().length - 1].getNeurons().length];
+            double[] prediction = new double[network.getLayers()[network.getLayers().length - 1].getNeurons().length];
             for (int j = 0; j < prediction.length; j++) {
                 prediction[j] = network.getLayers()[network.getLayers().length - 1].getNeurons()[j].getValue();
             }
@@ -189,10 +174,10 @@ public class Main {
             System.out.println("Network error: " + error);
         }
     }
-
-    public static float[][] read(String fileName) {
+*/
+    public static double[][] read(String fileName) {
         String[][] datasetString = new String[303][14];
-        float[][] datasetFloat = new float[303][14];
+        double[][] datasetFloat = new double[303][14];
         int count = 0;
 
         try {
