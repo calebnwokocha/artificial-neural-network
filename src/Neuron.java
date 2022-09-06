@@ -11,16 +11,24 @@ public class Neuron {
     private final ArrayList<Double> weights;
     private ArrayList<Double> deltas;
     private double value, bias, learningRate;
+    private ArrayList<Integer[]> links;
     private String activationType;
+    private int rowID;
+    private int columnID;
 
     // Neuron constructor
-    public Neuron (String cFunctionName, int weightCount, double learningRate, String activationType) {
+    public Neuron (String cFunctionName, double learningRate, String activationType,
+                   int rowID, int columnID, ArrayList<Integer[]> links)
+    {
         this.activationType = activationType;
         this.learningRate = learningRate;
         this.cFunctionName = cFunctionName;
         this.weights = new ArrayList<>();
+        this.rowID = rowID;
+        this.columnID = columnID;
+        this.links = links;
         deltas.add(Math.random()); // Initialize random delta of bias.
-        for (int i = 0; i < weightCount; i++) {
+        for (int i = 0; i < links.size(); i++) {
             this.weights.add(Math.random()); // Initialize random weights.
             deltas.add(Math.random()); // Initialize random deltas of weights.
         } this.bias = (float) Math.random(); // Initialize random bias.
@@ -49,6 +57,18 @@ public class Neuron {
 
     public void normalize (double normalizedValue) { this.value = normalizedValue; }
 
+    public ArrayList<Integer[]> getLinks() { return links; }
+
+    public void setLinks(ArrayList<Integer[]> links) { this.links = links; }
+
+    public int getColumnID() { return columnID; }
+
+    public void setColumnID(int columnID) { this.columnID = columnID; }
+
+    public int getRowID() { return rowID; }
+
+    public void setRowID(int rowID) { this.rowID = rowID; }
+
     public void activate (double[] parameters) { // Activate neuron, use parameters for comprehensive function.
         CFunction cFunction = new CFunction(this.cFunctionName, parameters);
         double cValue = cFunction.getValue(); // Result of comprehensive function.
@@ -72,22 +92,13 @@ public class Neuron {
         for (int i = 0; i < weights.size(); i++) { weights.set(i, weights.get(i) - maxWeight); }
     }
 
-    private void setDeltas (double[][][] neighborWeights, double delta) {
-        double sum = 0.0;
-        double product = 1.0;
-        for (int i = 0; i < neighborWeights.length; i++) {
-            for (int j = 0; j < neighborWeights[i].length; j++) {
-                for (int k = 0; k < neighborWeights[i][j].length; k++) {
-                    sum += neighborWeights[i][j][k];
-                } product *= sum;
-            } this.deltas.set(i + 1, product * delta);
-            // 0th index of errorDeriatives is for bias.
-        } // TODO: this.deltas.size(0, )
+    private void setDeltas (double[][][] downstreamDeltas, double delta) {
+
     }
 
     private double identity (double x) { return x; }
 
-    private double identityDerivative (double x) { return 1.0; }
+    private double identityDerivative (double x) { return (x + 1.0) * Math.pow(x + 1.0, -1); }
 
     private double tanh (double x) { return (2 / (1 + Math.pow(Math.E, -(2 * x)))) - 1; }
 

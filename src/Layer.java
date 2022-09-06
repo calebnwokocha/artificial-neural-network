@@ -4,22 +4,26 @@
  * DEPARTMENT: COMPUTER SCIENCE
  */
 
+import java.util.ArrayList;
+
 public class Layer {
     private final Neuron[] neurons;
 
     // Layer constructor
-    public Layer (int neuronCount, String[] cFunctionName, int[] weightCounts, double[] learningRates,
-                  String[] activationType) throws WrongInitialization
+    public Layer (int neuronCount, String[] cFunctionName, double[] learningRates, String[] activationType,
+                  int[] rowIDs, int[] columnIDs, ArrayList<ArrayList<Integer[]>> links) throws WrongInitialization
     {
         // neuronCount is the number of neurons in the layer.
-        if (cFunctionName.length != neuronCount || weightCounts.length != neuronCount
-                || learningRates.length != neuronCount || activationType.length != neuronCount)
-        { // The length of cFunctionName, weightCounts, learningRates, and activationType must equal neuronCount.
+        if (cFunctionName.length != neuronCount || learningRates.length != neuronCount
+                || activationType.length != neuronCount || rowIDs.length != neuronCount
+                || columnIDs.length != neuronCount || links.size() != neuronCount)
+        { // The length of cFunctionName, weightCounts, learningRates, etc., must equal neuronCount.
             throw new WrongInitialization("Wrong initialization of layer"); }
         else { // Initialize all neurons.
             this.neurons = new Neuron[neuronCount];
             for (int i = 0; i < neurons.length; i++) {
-                neurons[i] = new Neuron(cFunctionName[i], weightCounts[i], learningRates[i], activationType[i]);
+                neurons[i] = new Neuron(cFunctionName[i], learningRates[i], activationType[i], rowIDs[i],
+                        columnIDs[i], links.get(i));
             }
         }
     }
@@ -30,8 +34,8 @@ public class Layer {
         for (int i = 0; i < this.neurons.length; i++) { neurons[i].activate(parameters[i]); }
     }
 
-    public void optimize (double[][][][] neighborWeights, double delta) { // Optimize all neurons.
-        for (int i = 0; i < this.neurons.length; i++) { neurons[i].optimize(neighborWeights[i], delta); }
+    public void optimize (double[][][][] downstreamDeltas, double delta) { // Optimize all neurons.
+        for (int i = 0; i < this.neurons.length; i++) { neurons[i].optimize(downstreamDeltas[i], delta); }
     }
 
     public void normalize () { // normalize all neurons for their values sum to equal 1.
